@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from auth.models import User
+from users.models import User
 from auth.services import AuthService
-from auth.utils import TOKEN_TYPE_FIELD, TokenType, credentials_exception, decode_jwt
+from auth.utils import TokenType, credentials_exception, decode_jwt
 from database import SessionDep
 
 http_bearer = HTTPBearer()
@@ -59,3 +59,20 @@ async def get_current_user_by_refresh(session: SessionDep, request: Request) -> 
         raise credentials_exception
 
     return user
+
+
+async def get_current_superuser(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """
+    Ensure the current user is a superuser.
+    """
+    if not current_user.is_superuser:
+        raise credentials_exception
+    return current_user
+
+
+GetCurrentUserDep = Annotated[User, Depends(get_current_user)]
+GetCurrentUserByRefreshDep = Annotated[User, Depends(get_current_user_by_refresh)]
+
+GetCurrentSuperUserDep = Annotated[User, Depends(get_current_superuser)]

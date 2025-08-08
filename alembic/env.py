@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.core.models import Base
-from src.auth.models import User
+from src.users.models import User
+from src.chat.models import Chat, Message, ChatUser
 
 load_dotenv(dotenv_path=".env")
 
@@ -19,7 +20,7 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-database_url = os.getenv("DATABASE_URL")
+database_url = os.getenv("DB__URL")
 if not database_url:
     raise ValueError("Missing database URL")
 

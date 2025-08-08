@@ -1,23 +1,23 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Response
 
 from auth.services import AuthService
 from auth.utils import (
-    TokenType,
     create_access_token,
     create_refresh_token,
-    credentials_exception,
 )
-from auth.dependencies import get_current_user, get_current_user_by_refresh
+from auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
 from database import SessionDep
-from auth.schemas import TokenS, UserAuthenticateS, UserCreateS, UserReadS
+from auth.schemas import TokenS, UserAuthenticateS
+from users.schemas import UserCreateS, UserS
+from users.services import UserService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register")
-async def register(session: SessionDep, user: UserCreateS) -> UserReadS:
-    user = await AuthService.create_user(session, user)
-    return UserReadS.model_validate(user)
+@router.post("/register", status_code=201)
+async def register(session: SessionDep, user: UserCreateS) -> UserS:
+    db_user = await UserService.create_user(session, user)
+    return db_user
 
 
 @router.post("/login")
@@ -40,7 +40,7 @@ async def login(
 
 
 @router.get("/me")
-def read_users_me(current_user: dict = Depends(get_current_user)):
+def read_users_me(current_user: GetCurrentUserDep) -> UserS:
     return {"user": current_user}
 
 
@@ -50,7 +50,7 @@ def read_users_me(current_user: dict = Depends(get_current_user)):
     response_model_exclude_none=True,
 )
 async def refresh_token(
-    current_user: dict = Depends(get_current_user_by_refresh),
+    current_user: GetCurrentUserByRefreshDep,
 ) -> TokenS:
 
     access_token = create_access_token({"sub": current_user.username})

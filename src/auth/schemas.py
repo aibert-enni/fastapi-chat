@@ -1,24 +1,9 @@
 from pydantic import BaseModel
+from users.schemas import UserUsernameS
 
 
-class UserS(BaseModel):
-    username: str
-
-
-class UserCreateS(UserS):
-    fullname: str | None = None
+class UserAuthenticateS(UserUsernameS):
     password: str
-
-
-class UserAuthenticateS(UserS):
-    password: str
-
-
-class UserReadS(UserS):
-    fullname: str | None = None
-
-    class Config:
-        from_attributes = True
 
 
 class TokenS(BaseModel):

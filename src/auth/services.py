@@ -1,48 +1,25 @@
 from typing import Union
-import jwt
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.exceptions import HTTPException
 from fastapi import status
 
-from auth.models import User
-from auth.schemas import UserAuthenticateS, UserCreateS, UserS
+from users.models import User
+from auth.schemas import UserAuthenticateS
+from users.schemas import UserBaseS
 from auth.utils import (
     TOKEN_TYPE_FIELD,
     TokenType,
-    decode_jwt,
     credentials_exception,
 )
-from core.utils import hash_password, verify_password
+from core.utils import verify_password
+from users.services import UserService
 
 
 class AuthService:
 
     @staticmethod
-    async def create_user(session: AsyncSession, user: UserCreateS) -> User:
-        hashed = hash_password(user.password)
-        user.password = hashed
-        db_user = User(**user.model_dump())
-
-        session.add(db_user)
-
-        await session.commit()
-        await session.refresh(db_user)
-
-        return db_user
-
-    @staticmethod
-    async def get_user(session: AsyncSession, username: str) -> Union[User, None]:
-        stmt = select(User).where(User.username == username)
-        result = await session.execute(stmt)
-        db_user = result.scalar_one_or_none()
-        return db_user
-
-    @classmethod
-    async def authenticate_user(
-        cls, session: AsyncSession, user: UserAuthenticateS
-    ) -> User:
-        db_user = await cls.get_user(session, user.username)
+    async def authenticate_user(session: AsyncSession, user: UserAuthenticateS) -> User:
+        db_user = await UserService.get_user_by_username(session, user.username)
         if db_user == None:
             raise HTTPException(
                 status_code=400, detail="username или пароль неправильный"
@@ -71,8 +48,8 @@ class AuthService:
         if username is None:
             raise credentials_exception
 
-        token_data = UserS(username=username)
+        token_data = UserBaseS(username=username)
 
-        user = await cls.get_user(session, token_data.username)
+        user = await UserService.get_user_by_username(session, token_data.username)
 
         return user
