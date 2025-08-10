@@ -65,37 +65,6 @@ async def websocket_chat(
         manager.disconnect(websocket, user.id)
 
 
-@router.get(
-    "/ws-docs",
-    summary="WebSocket чат",
-    description="Подключение к чату через WebSocket",
-)
-def websocket_docs():
-    """
-    ## Подключение к WebSocket
-
-    **URL:** `ws://localhost:8000/ws/{chat_id}?token={access_token}`
-    **Протокол:** WebSocket
-    **Авторизация:** JWT токен в query
-
-    ### Chat subscribe:
-    ```json
-    { "action": "subscribe", "chat_ids": ["3213214132132", "31231312312"] }
-    ```
-
-    ### Сообщения:
-    ```json
-    { "type": "message", "text": "Привет" }
-    ```
-
-    ### Ответы:
-    ```json
-    { "type": "message", "text": "Привет от сервера" }
-    ```
-    """
-    return {"message": "Смотри описание в документации"}
-
-
 @router.get("/{chat_id}")
 async def get_chat(chat_id: UUID, session: SessionDep):
     db_chat = await ChatService.get_chat(session, chat_id)

@@ -5,6 +5,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 BASE_DIR = Path(__file__).parent.parent
 
 
+class MediaSettings(BaseModel):
+    upload_path: Path = BASE_DIR / "uploads"
+
+
 class DBSettings(BaseModel):
     URL: str
 
@@ -24,6 +28,7 @@ class Settings(BaseSettings):
     )
     db: DBSettings
     jwt: JwtSettings = JwtSettings()
+    media: MediaSettings = MediaSettings()
 
 
 settings = Settings()
@@ -31,3 +36,4 @@ settings = Settings()
 
 def print_settings():
     print(f"Database URL: {settings.db.URL}")
+    print(f"Upload path: {settings.media.upload_path}")

@@ -32,7 +32,7 @@ Perfect as a learning project or a starting point for more complex applications.
 - [PostgreSQL](https://www.postgresql.org/) — database (can be replaced)
 - [Alembic](https://alembic.sqlalchemy.org/) - database migration tool
 - [Uvicorn](https://www.uvicorn.org/) — ASGI server
-- [Pytest]()
+- [Pytest](https://docs.pytest.org/en/stable/) - testing tool
 ---
 
 ## Installation
@@ -85,7 +85,7 @@ You can also test WebSocket via test_websocket.html in the project.
 ---
 ## Test
 ```bash
-# 1. create test database and set db url in run_test_servet.py
+# 1. create test database and set db url in run_test_server.py
 
 # 2. run test server
 cd src

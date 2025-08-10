@@ -33,6 +33,8 @@ class User(BaseUUID):
 
     messages: Mapped[list["Message"]] = relationship("Message", back_populates="user")
 
+    images: Mapped[list["Image"]] = relationship("Image", back_populates="owner")
+
     def __repr__(self) -> str:
         return (
             f"User(id={self.id!r}, name={self.username!r}, fullname={self.fullname!r})"

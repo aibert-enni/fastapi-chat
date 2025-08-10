@@ -11,6 +11,7 @@ import alembic_postgresql_enum
 from core.models import Base
 from users.models import User
 from chat.models import Chat, Message, ChatUser
+from media.models import Image
 
 load_dotenv(dotenv_path=".env")
 

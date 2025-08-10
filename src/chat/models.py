@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM as PGEnum
 from typing import Optional
 import uuid
 
-from sqlalchemy import UUID, UniqueConstraint
+from sqlalchemy import UUID, DateTime, UniqueConstraint
 
 from core.models import BaseUUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
@@ -26,10 +26,15 @@ class Chat(BaseUUID):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, nullable=False
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
     )
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, nullable=False
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
     )
 
     users: Mapped[list["ChatUser"]] = relationship(
@@ -70,7 +75,9 @@ class Message(BaseUUID):
     )
     content: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, nullable=False
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
     )
 
     chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
