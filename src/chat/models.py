@@ -1,4 +1,6 @@
 from datetime import datetime
+from enum import Enum
+from sqlalchemy.dialects.postgresql import ENUM as PGEnum
 from typing import Optional
 import uuid
 
@@ -9,11 +11,20 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import ForeignKey
 
 
+class ChatType(Enum):
+    PRIVATE = "private"
+    GROUP = "group"
+
+
 class Chat(BaseUUID):
     __tablename__ = "chats"
 
     name: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[Optional[str]]
+    type: Mapped[Enum] = mapped_column(
+        PGEnum(ChatType, name="chat_type"), nullable=False
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         default=datetime.utcnow, nullable=False
     )

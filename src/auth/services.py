@@ -11,7 +11,7 @@ from auth.utils import (
     TokenType,
     credentials_exception,
 )
-from core.utils import verify_password
+from core.utils import hash_password, verify_password
 from users.services import UserService
 
 
@@ -53,3 +53,17 @@ class AuthService:
         user = await UserService.get_user_by_username(session, token_data.username)
 
         return user
+
+    async def change_user_password(
+        session: AsyncSession, user: User, current_password: str, new_password: str
+    ) -> User:
+        if not verify_password(current_password, user.password):
+            raise HTTPException(detail={"error": "Password does not match"})
+
+        new_hashed_password = hash_password(new_password)
+        user.password = new_hashed_password
+
+        await session.commit()
+        await session.refresh(user)
+
+        return User

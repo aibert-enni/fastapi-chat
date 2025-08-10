@@ -7,7 +7,7 @@ from auth.utils import (
 )
 from auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
 from database import SessionDep
-from auth.schemas import TokenS, UserAuthenticateS
+from auth.schemas import TokenS, UserAuthenticateS, UserChangePasswordS
 from users.schemas import UserCreateS, UserS
 from users.services import UserService
 
@@ -41,7 +41,7 @@ async def login(
 
 @router.get("/me")
 def read_users_me(current_user: GetCurrentUserDep) -> UserS:
-    return {"user": current_user}
+    return current_user
 
 
 @router.post(
@@ -56,3 +56,13 @@ async def refresh_token(
     access_token = create_access_token({"sub": current_user.username})
 
     return TokenS(access_token=access_token, token_type="bearer")
+
+
+@router.post("/change-password")
+async def change_password(
+    data: UserChangePasswordS, current_user: GetCurrentUserDep, session: SessionDep
+):
+    await AuthService.change_user_password(
+        session, current_user, data.current_password, data.new_password
+    )
+    return {"status": "success", "message": "Password was changed"}

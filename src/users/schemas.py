@@ -1,5 +1,5 @@
 from uuid import UUID
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from auth.validators import Password
 
@@ -18,22 +18,17 @@ class UserCreateS(UserBaseS):
 
 class UserReadS(UserBaseS):
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserS(UserBaseS):
     id: UUID
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SuperUserS(UserS):
     is_superuser: bool
-
-    class Config:
-        from_attributes = True
 
 
 class SuperUserUpdateS(UserBaseS):

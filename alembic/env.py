@@ -1,12 +1,16 @@
 import asyncio
 import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_engine_from_config
+import alembic_postgresql_enum
 
-from src.core.models import Base
-from src.users.models import User
-from src.chat.models import Chat, Message, ChatUser
+from core.models import Base
+from users.models import User
+from chat.models import Chat, Message, ChatUser
 
 load_dotenv(dotenv_path=".env")
 
