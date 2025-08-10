@@ -18,6 +18,10 @@ Perfect as a learning project or a starting point for more complex applications.
   - WebSocket-based communication
   - Private chat rooms by `chat_id`
   - Broadcast messages to all connected users in the room
+- **Admin**
+  - Admin endpoints
+- **Image**
+  - User can upload avatar
 - **Clean project structure**
   - Separation of routes, services, and schemas
   - Easy to extend
