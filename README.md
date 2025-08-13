@@ -24,6 +24,7 @@ Perfect as a learning project or a starting point for more complex applications.
   - User can upload avatar
 - **Clean project structure**
   - Separation of routes, services, and schemas
+  - Separation of api and websocket server
   - Easy to extend
 
 ---
@@ -37,6 +38,7 @@ Perfect as a learning project or a starting point for more complex applications.
 - [Alembic](https://alembic.sqlalchemy.org/) - database migration tool
 - [Uvicorn](https://www.uvicorn.org/) — ASGI server
 - [Pytest](https://docs.pytest.org/en/stable/) - testing tool
+- [RabbitMQ](https://www.rabbitmq.com/) - for chat message queue
 ---
 
 ## Installation
@@ -69,18 +71,21 @@ cd ..
 cp .env.example .env
 # Edit .env file with your database URL, JWT secret, etc.
 
-# 7. Get to src directory
-cd src
+# 7. Up docket-compose
+docker-compose up
 
-# 8. Run the application
-poetry run uvicorn app.main:app --reload
+# 8. Run the applications
+# Api server
+poetry run uvicorn app_api.main:app --port 8080 --reload
+# Websocket server
+poetry run uvicorn app_ws.main:app --port 8080 --reload
 ```
 
 ---
 
 ## Documentation
 
-API doc: http://localhost:8000/docs#
+API doc: http://localhost:8080/docs#
 
 [Websocket documentation](docs/WEBSOCKET_API.md)
 
