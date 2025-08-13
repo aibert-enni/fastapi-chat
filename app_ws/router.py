@@ -2,7 +2,9 @@ import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi import Query
 from fastapi.websockets import WebSocketState
+from pydantic import ValidationError
 
+from app_ws.redis import redis_publish
 from shared.auth.services import AuthService
 
 from .utils import parse_ws_message
@@ -13,12 +15,12 @@ from shared.auth.utils import decode_jwt, credentials_exception
 from shared.database import SessionDep
 
 
-router = APIRouter(prefix="/ws", tags=["ws"])
+router = APIRouter(tags=["ws"])
 
 logger = logging.getLogger(__name__)
 
 
-@router.websocket("/")
+@router.websocket("/ws")
 async def websocket_chat(
     websocket: WebSocket,
     session: SessionDep,
@@ -38,9 +40,13 @@ async def websocket_chat(
                 data = await websocket.receive_json()
                 parse_ws_message(data)
                 data["user_id"] = str(user.id)
-                await rabbit_manager.publish_message(data, rabbit_consumer.queue_name)
+                await redis_publish("chat_channel", data)
+            except ValidationError as e:
+                logger.error(f"Websocket data validation error: {e}")
+                await websocket.send_json({"status": "error", "error": e.errors()})
             except ValueError as e:
-                logger.error(f"Websocket data receive error: {e}")
+                logger.error(f"Websocket action error: {e}")
+                await websocket.send_json({"status": "error", "error": str(e)})
     except Exception as e:
         logger.error(f"Disconnected: {e}")
     finally:

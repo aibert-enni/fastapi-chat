@@ -67,30 +67,10 @@ class ConnectionManager:
         except Exception as e:
             logger.error(f"Error sending JSON: {e}")
 
-    async def send_message_to_chat(self, chat_id: UUID, message: str) -> bool:
-        if chat_id not in self.chat_subscriptions:
-            logger.warning(f"Chat {chat_id} has no subscribers")
-            return False
-
-        tasks = []
-
-        for user_id in self.chat_subscriptions[chat_id]:
-            if user_id in self.active_connections:
-                connections = self.active_connections[user_id]
-                tasks.extend(ws.send_text(message) for ws in connections)
-
-        if tasks:
-            await asyncio.gather(*tasks, return_exceptions=True)
-            return True
-
-        return False
-
     async def send_json_to_chat(self, chat_id: UUID, data: dict) -> bool:
         if chat_id not in self.chat_subscriptions:
             logger.warning(f"Chat {chat_id} has no subscribers")
             return False
-
-        tasks = []
 
         for user_id in self.chat_subscriptions[chat_id]:
             await self.send_json_to_user(user_id, data)

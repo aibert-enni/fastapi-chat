@@ -70,7 +70,7 @@ class ChatService:
 
     @staticmethod
     async def get_user_chat_ids_in_list(
-        session: AsyncSession, user: User, chat_ids: list[int]
+        session: AsyncSession, user: User, chat_ids: list[str]
     ) -> list[UUID]:
         stmt = select(ChatUser.chat_id).where(
             ChatUser.user_id == user.id, Chat.id.in_(chat_ids)

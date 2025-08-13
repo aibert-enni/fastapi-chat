@@ -38,7 +38,8 @@ Perfect as a learning project or a starting point for more complex applications.
 - [Alembic](https://alembic.sqlalchemy.org/) - database migration tool
 - [Uvicorn](https://www.uvicorn.org/) — ASGI server
 - [Pytest](https://docs.pytest.org/en/stable/) - testing tool
-- [RabbitMQ](https://www.rabbitmq.com/) - for chat message queue
+- [RabbitMQ](https://www.rabbitmq.com/) - for message queue
+- [Redis](https://redis.io/) - for synchronize websockets of multiple server instanses 
 ---
 
 ## Installation

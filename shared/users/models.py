@@ -5,6 +5,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.core.models import BaseUUID
+from shared.media.models import Image
 
 
 class User(BaseUUID):

@@ -1,4 +1,13 @@
 services:
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     hostname: rabbitmq
@@ -13,4 +22,5 @@ services:
       - rabbitmq-data:/var/lib/rabbitmq
 
 volumes:
+  redis-data:
   rabbitmq-data:

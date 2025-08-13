@@ -18,6 +18,10 @@ class RMQSettings(BaseModel):
     URL: str
 
 
+class RedisSettings(BaseModel):
+    URL: str
+
+
 class JwtSettings(BaseModel):
     PRIVATE_KEY_PATH: Path = BASE_DIR / "certs" / "jwt-private.pem"
     PUBLIC_KEY_PATH: Path = BASE_DIR / "certs" / "jwt-public.pem"
@@ -33,6 +37,7 @@ class Settings(BaseSettings):
     )
     db: DBSettings
     rmq: RMQSettings
+    redis: RedisSettings
     jwt: JwtSettings = JwtSettings()
     media: MediaSettings = MediaSettings()
 

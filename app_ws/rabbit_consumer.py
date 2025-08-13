@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .ws_manager import ConnectionManager, manager
 from .schemas import WSMessage, WSSubscribe
 from .utils import parse_ws_message
-from .websocket_handlers import handle_message, handle_subscribe
 from shared.database import session_context
 from app_ws.rabbit_manager import RabbitManager, rabbit_manager
 from shared.users.services import UserService
@@ -49,23 +48,6 @@ class RabbitConsumer:
                 logger.warning(f"User {ws_message.user_id} not found")
                 await message.ack()
                 return
-
-            if isinstance(ws_message, WSMessage):
-                await handle_message(
-                    user,
-                    session,
-                    ws_message.model_dump(),
-                    self.ws_manager,
-                )
-            elif isinstance(ws_message, WSSubscribe):
-                await handle_subscribe(
-                    user,
-                    session,
-                    ws_message.model_dump(),
-                    self.ws_manager,
-                )
-            else:
-                raise ValueError(f"Unknown WS message type: {type(ws_message)}")
 
         except Exception as e:
             logger.exception(f"Error processing RabbitMQ message: {e}")
