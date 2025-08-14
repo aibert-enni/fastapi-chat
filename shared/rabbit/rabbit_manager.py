@@ -21,11 +21,11 @@ class RabbitManager:
         self.channel = await self.connection.channel()
         print("RabbitMQ connected")
 
-    async def publish_message(self, message: str, queue_name: str):
+    async def publish_message(self, message: dict, queue_name: str):
         if not self.channel:
             raise RuntimeError("RabbitMQ connection is not established")
         await self.channel.declare_queue(queue_name, durable=True)
-        body = json.dumps(message).encode()
+        body = json.dumps(message).encode("utf-8")
         await self.channel.default_exchange.publish(
             aio_pika.Message(body=body), routing_key=queue_name
         )

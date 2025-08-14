@@ -1,16 +1,15 @@
+import json
 import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi import Query
 from fastapi.websockets import WebSocketState
 from pydantic import ValidationError
 
-from app_ws.redis import redis_publish
+from shared.redis import redis_publish
 from shared.auth.services import AuthService
 
 from .utils import parse_ws_message
 from .ws_manager import manager
-from .rabbit_consumer import rabbit_consumer
-from .rabbit_manager import rabbit_manager
 from shared.auth.utils import decode_jwt, credentials_exception
 from shared.database import SessionDep
 
@@ -40,7 +39,7 @@ async def websocket_chat(
                 data = await websocket.receive_json()
                 parse_ws_message(data)
                 data["user_id"] = str(user.id)
-                await redis_publish("chat_channel", data)
+                await redis_publish("chat_channel", json.dumps(data))
             except ValidationError as e:
                 logger.error(f"Websocket data validation error: {e}")
                 await websocket.send_json({"status": "error", "error": e.errors()})

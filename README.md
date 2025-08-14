@@ -18,6 +18,8 @@ Perfect as a learning project or a starting point for more complex applications.
   - WebSocket-based communication
   - Private chat rooms by `chat_id`
   - Broadcast messages to all connected users in the room
+- **Push notification**
+  - Real-time push notification via websocket
 - **Admin**
   - Admin endpoints
 - **Image**

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app_ws.schemas import WSMessage, WSSubscribe
+from shared.websocket.schemas import WSMessage, WSPushNotificationS, WSSubscribe
 from app_ws.utils import parse_ws_message
 from shared.chat.services import ChatService
 from shared.database import session_context
@@ -62,10 +62,20 @@ class ChatWSService:
             response["error"] = "Couldn't send message"
         await self.manager.send_json_to_user(user.id, response)
 
+    async def _handle_push_notification(self, user: User, data: WSPushNotificationS):
+        await self.manager.send_json_to_user(
+            user.id,
+            data.model_dump(mode="json"),
+        )
+
     @staticmethod
-    def safe_parse_message(payload):
+    def safe_parse_message(payload: dict):
         try:
-            return parse_ws_message(payload)
+            action = payload.get("action")
+            if action == "push_notification":
+                return WSPushNotificationS(**payload)
+            else:
+                return parse_ws_message(payload)
         except ValueError as e:
             logger.error(f"Invalid WS message format: {e}")
             return None
@@ -104,6 +114,8 @@ class ChatWSService:
                         session,
                         ws_message,
                     )
+                elif isinstance(ws_message, WSPushNotificationS):
+                    await self._handle_push_notification(user, ws_message)
                 else:
                     raise ValueError(f"Unknown WS message type: {type(ws_message)}")
         except Exception as e:

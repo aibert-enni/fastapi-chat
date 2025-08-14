@@ -17,3 +17,7 @@ class WSMessage(WSMessageBase):
     action: str = "message"
     chat_id: UUID
     text: str = Field(..., min_length=1, max_length=1000)
+
+
+class WSPushNotificationS(WSMessageBase):
+    message: str

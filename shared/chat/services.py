@@ -100,6 +100,13 @@ class ChatService:
         return users_schemas
 
     @staticmethod
+    async def get_user_chats(session: AsyncSession, user_id: int) -> list[Chat]:
+        stmt = select(Chat).where(User.id == user_id)
+        result = await session.execute(stmt)
+        chats = result.scalars().all()
+        return chats
+
+    @staticmethod
     async def create_message(
         session: AsyncSession, chat_id: UUID, user_id: UUID, message: str
     ) -> Message:

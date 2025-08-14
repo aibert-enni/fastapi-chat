@@ -71,3 +71,9 @@ async def get_chat_users(chat_id: UUID, session: SessionDep):
 async def get_chat_messages(chat_id: UUID, session: SessionDep):
     messages = await ChatService.get_messages_by_chat(session, chat_id)
     return {"messages": messages}
+
+
+@router.get("/user_chats/{user_id}")
+async def get_user_chats(user_id: UUID, session: SessionDep) -> list[ChatS]:
+    chats = await ChatService.get_user_chats(session, user_id)
+    return chats
