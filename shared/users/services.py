@@ -2,12 +2,13 @@ from typing import Union
 from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError as SQLIntegrityError
 from fastapi import HTTPException, status
 
 from shared.users.schemas import SuperUserCreateS, SuperUserUpdateS, UserCreateS
 from shared.core.utils import hash_password
 from shared.users.models import User
+from shared.error.custom_exceptions import IntegrityError, NotFoundError
 
 
 class UserService:
@@ -23,10 +24,9 @@ class UserService:
 
         try:
             await session.commit()
-        except IntegrityError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким username уже существует",
+        except SQLIntegrityError:
+            raise IntegrityError(
+                "User with this username already exist",
             )
         await session.refresh(db_user)
 
@@ -40,7 +40,7 @@ class UserService:
         result = await session.execute(stmt)
         db_user = result.scalar_one_or_none()
         if not db_user:
-            raise HTTPException(
+            raise NotFoundError(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
             )
         return db_user
@@ -57,9 +57,7 @@ class UserService:
         db_user = result.scalar_one_or_none()
 
         if not db_user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
+            raise NotFoundError("User not found")
 
         return db_user
 

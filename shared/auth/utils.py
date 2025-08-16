@@ -12,13 +12,6 @@ class TokenType(str, Enum):
     REFRESH = "refresh"
 
 
-credentials_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Could not validate credentials",
-    headers={"WWW-Authenticate": "Bearer"},
-)
-
-
 def encode_jwt(
     payload: dict,
     private_key: str = settings.jwt.PRIVATE_KEY_PATH.read_text(),

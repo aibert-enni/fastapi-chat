@@ -2,10 +2,15 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError as SQLIntegrityError
 
 from shared.users.models import User
 from shared.chat.models import Chat, ChatType, ChatUser, Message
 from shared.chat.schemas import ChatCreateS, ChatUserS, MessageInfoS
+from shared.error.custom_exceptions import (
+    IntegrityError,
+    NotFoundError,
+)
 
 
 class ChatService:
@@ -37,7 +42,8 @@ class ChatService:
         )
         result = await session.execute(query)
         chat = result.scalars().first()
-
+        if chat is None:
+            raise NotFoundError
         return chat
 
     @classmethod
@@ -46,10 +52,7 @@ class ChatService:
     ) -> Chat:
         exist_chat = await cls.get_private_chat(session, user_one, user_two)
         if exist_chat:
-            raise HTTPException(
-                detail={"error": "Chat already exist"},
-                status_code=status.HTTP_400_BAD_REQUEST,
-            )
+            raise IntegrityError(message="Private chat already exist")
         db_chat = await cls.create_chat(
             session,
             ChatCreateS(name=f"{user_one.username} & {user_two.username}"),
@@ -65,7 +68,7 @@ class ChatService:
         result = await session.execute(stmt)
         db_chat = result.scalar_one_or_none()
         if db_chat is None:
-            raise HTTPException(status_code=404, detail="Chat not found")
+            raise NotFoundError(message="Chat not found")
         return db_chat
 
     @staticmethod
@@ -112,8 +115,11 @@ class ChatService:
     ) -> Message:
         db_message = Message(chat_id=chat_id, user_id=user_id, content=message)
         session.add(db_message)
-        await session.commit()
-        await session.refresh(db_message)
+        try:
+            await session.commit()
+            await session.refresh(db_message)
+        except SQLIntegrityError as e:
+            raise IntegrityError(message="Invalid chat_id or user_id")
         return db_message
 
     @staticmethod
@@ -129,7 +135,7 @@ class ChatService:
             MessageInfoS(
                 id=m.id,
                 user_id=m.user_id,
-                username=username,  # <- вручную
+                username=username,
                 created_at=m.created_at,
                 content=m.content,
             )

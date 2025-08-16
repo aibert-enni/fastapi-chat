@@ -1,11 +1,14 @@
 from typing import Annotated
 
 from pydantic import AfterValidator
+from pydantic_core import PydanticCustomError
 
 
 def password_validator(value: str) -> str:
     if len(value) < 8:
-        raise ValueError("Пароль должен быть не менее 8 символов")
+        raise PydanticCustomError(
+            "password_length", "The password must be at least 8 characters long."
+        )
 
     has_upper = any(c.isupper() for c in value)
     has_lower = any(c.islower() for c in value)
@@ -13,13 +16,22 @@ def password_validator(value: str) -> str:
     has_special = any(c in '!@#$%^&*(),.?":{}|<>' for c in value)
 
     if not has_upper:
-        raise ValueError("Пароль должен содержать хотя бы одну заглавную букву")
+        raise PydanticCustomError(
+            "password_upper", "The password must contain at least one capital letter."
+        )
     if not has_lower:
-        raise ValueError("Пароль должен содержать хотя бы одну строчную букву")
+        raise PydanticCustomError(
+            "password_lower", "The password must contain at least one lowercase letter."
+        )
     if not has_digit:
-        raise ValueError("Пароль должен содержать хотя бы одну цифру")
+        raise PydanticCustomError(
+            "password_digit", "The password must contain at least one digit."
+        )
     if not has_special:
-        raise ValueError("Пароль должен содержать хотя бы один специальный символ")
+        raise PydanticCustomError(
+            "password_special",
+            "The password must contain at least one special character.",
+        )
 
     return value
 

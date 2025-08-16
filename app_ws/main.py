@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from shared.settings import settings, print_settings
+from shared.settings import settings, log_settings
 from shared.database import engine
 from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.rabbit.rabbit_consumer import rabbit_consumer
@@ -12,7 +12,7 @@ from .router import router
 
 @asynccontextmanager
 async def lifestyle(app: FastAPI):
-    print_settings()
+    log_settings()
     settings.media.upload_path.mkdir(exist_ok=True)
     await rabbit_manager.connect()
     app.state.rabbit_task = asyncio.create_task(

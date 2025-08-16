@@ -4,7 +4,7 @@ import aio_pika
 
 from shared.settings import settings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("uvicorn")
 
 
 class RabbitManager:
@@ -19,7 +19,7 @@ class RabbitManager:
     async def connect(self):
         self.connection = await aio_pika.connect_robust(settings.rmq.URL)
         self.channel = await self.connection.channel()
-        print("RabbitMQ connected")
+        logger.info("RabbitMQ connected")
 
     async def publish_message(self, message: dict, queue_name: str):
         if not self.channel:

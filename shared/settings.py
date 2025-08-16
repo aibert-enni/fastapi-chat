@@ -1,9 +1,15 @@
+import json
+import logging
 from pathlib import Path
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 BASE_DIR = Path(__file__).parent.parent
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger("uvicorn")
 
 
 class MediaSettings(BaseModel):
@@ -45,7 +51,5 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
-def print_settings():
-    print(f"Database URL: {settings.db.URL}")
-    print(f"RabbitMQ URL: {settings.rmq.URL}")
-    print(f"Upload path:  {settings.media.upload_path}")
+def log_settings():
+    logger.info("Loaded settings:\n" + settings.model_dump_json(indent=2))
