@@ -27,6 +27,7 @@ Perfect as a learning project or a starting point for more complex applications.
 - **Clean project structure**
   - Separation of routes, services, and schemas
   - Separation of api and websocket server
+  - Custom and flexible exception handling
   - Easy to extend
 
 ---
