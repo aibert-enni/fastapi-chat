@@ -1,4 +1,32 @@
 services:
+  app-api:
+    build:
+      context: .
+      dockerfile: app_api/Dockerfile
+    expose:
+      - "8000"
+    depends_on: [redis, rabbitmq, postgres]
+    command: sh -c "alembic upgrade head && gunicorn app_api.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000"
+  app-ws:
+    build:
+      context: .
+      dockerfile: app_ws/Dockerfile
+    expose:
+      - "8000"
+    depends_on: [redis, rabbitmq, postgres]
+    command: "gunicorn app_ws.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000"
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1290qwer
+      POSTGRES_DB: chat
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   redis:
     image: redis:7.2
     container_name: redis
@@ -21,6 +49,15 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
+  nginx:
+    image: nginx:stable-alpine3.21-perl
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on: [app-api, app-ws]
 volumes:
+  postgres_data:
   redis-data:
   rabbitmq-data:

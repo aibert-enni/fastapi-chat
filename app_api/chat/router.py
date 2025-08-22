@@ -26,6 +26,11 @@ async def get_chat(chat_id: UUID, session: SessionDep):
     return {"chat": db_chat}
 
 
+@router.delete("/{chat_id}")
+async def delete_chat(chat_id: UUID, session: SessionDep):
+    await ChatService
+
+
 @router.post("/group")
 async def create_group_chat(
     chat: ChatCreateS, session: SessionDep, user: GetCurrentUserDep

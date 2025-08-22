@@ -2,7 +2,7 @@
 
 ## Connection
 
-**Endpoint:** `ws://localhost:8000/chats/ws`
+**Endpoint:** `ws://localhost/ws?token=...`
 
 **Authentication:** JWT token via query parameter
 
@@ -91,7 +91,7 @@ All messages are JSON objects sent as text frames.
 
 ### JavaScript Client
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/chats/ws?token=' + token);
+const ws = new WebSocket('ws://localhost/ws?token=' + token);
 
 ws.onopen = function() {
     // Subscribe to chats
@@ -121,7 +121,7 @@ import websockets
 import json
 
 async def chat_client():
-    uri = "ws://localhost:8000/chats/ws?token=your_token"
+    uri = "ws://localhost:8000/ws?token=your_token"
     
     async with websockets.connect(uri) as websocket:
         # Subscribe to chat
@@ -155,4 +155,4 @@ asyncio.run(chat_client())
 Use tools like:
 - **Browser DevTools** WebSocket tab
 - **Postman** WebSocket collections  
-- **wscat**: `wscat -c "ws://localhost:8000/chats/ws?token=TOKEN"`
+- **wscat**: `wscat -c "ws://localhost/ws?token=TOKEN"`

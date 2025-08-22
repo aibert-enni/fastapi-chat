@@ -24,6 +24,7 @@ dependencies = [
     "alembic-postgresql-enum (>=1.8.0,<2.0.0)",
     "aio-pika (>=9.5.7,<10.0.0)",
     "aioredis (>=2.0.1,<3.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
 ]
 
 [tool.poetry]

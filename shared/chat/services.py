@@ -1,5 +1,4 @@
 from uuid import UUID
-from fastapi import HTTPException, status
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError as SQLIntegrityError

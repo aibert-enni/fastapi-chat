@@ -43,6 +43,7 @@ Perfect as a learning project or a starting point for more complex applications.
 - [Pytest](https://docs.pytest.org/en/stable/) - testing tool
 - [RabbitMQ](https://www.rabbitmq.com/) - for message queue
 - [Redis](https://redis.io/) - for synchronize websockets of multiple server instanses 
+- [Nginx](https://nginx.org/) - for reverse proxy
 ---
 
 ## Installation
@@ -77,19 +78,13 @@ cp .env.example .env
 
 # 7. Up docket-compose
 docker-compose up
-
-# 8. Run the applications
-# Api server
-poetry run uvicorn app_api.main:app --port 8080 --reload
-# Websocket server
-poetry run uvicorn app_ws.main:app --port 8080 --reload
 ```
 
 ---
 
 ## Documentation
 
-API doc: http://localhost:8080/docs#
+API doc: http://localhost/docs#
 
 [Websocket documentation](docs/WEBSOCKET_API.md)
 

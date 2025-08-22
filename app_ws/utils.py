@@ -1,4 +1,4 @@
-from shared.websocket.schemas import WSMessage, WSSubscribe, WSPushNotificationS
+from shared.websocket.schemas import WSMessage, WSSubscribe
 
 
 def parse_ws_message(data: dict):

@@ -10,7 +10,8 @@ from shared.auth.services import AuthService
 
 from .utils import parse_ws_message
 from .ws_manager import manager
-from shared.auth.utils import decode_jwt, credentials_exception
+from shared.auth.utils import decode_jwt
+from shared.error.custom_exceptions import CredentialError
 from shared.database import SessionDep
 
 
@@ -28,7 +29,7 @@ async def websocket_chat(
     try:
         payload = decode_jwt(token)
     except Exception:
-        raise credentials_exception
+        raise CredentialError
 
     user = await AuthService.get_user_by_token(session, payload)
 

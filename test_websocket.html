@@ -218,6 +218,13 @@
         { "action": "message_response", "status": "success" }
       </div>
 
+      <h3>
+        <span class="method receive">RECEIVE</span>Push Notification Response
+      </h3>
+      <div class="json-block">
+        {"action":"push_notification","user_id":"be85f5df-9377-47ac-9057-5022e98478cf","message":"hello"}
+      </div>
+
       <h3><span class="method receive">RECEIVE</span>Incoming Chat Message</h3>
       <div class="json-block">
         { "from": "username", "message": "Hello, world!", "chat_id":
@@ -301,7 +308,7 @@
         connectBtn.disabled = true;
 
         try {
-          ws = new WebSocket(`ws://localhost:8000/chats/ws?token=${token}`);
+          ws = new WebSocket(`ws://localhost/ws?token=${token}`);
 
           ws.onopen = () => {
             addLog("Connected to WebSocket");

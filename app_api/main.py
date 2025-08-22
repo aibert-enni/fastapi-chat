@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 import uuid
 
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import FastAPI, Request
 
 from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.settings import log_settings, settings
@@ -24,7 +24,7 @@ async def lifestyle(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI(lifespan=lifestyle)
+app = FastAPI(lifespan=lifestyle, root_path="/api")
 
 
 @app.middleware("http")

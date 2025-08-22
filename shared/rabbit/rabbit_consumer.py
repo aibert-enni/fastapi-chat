@@ -1,6 +1,5 @@
 import json
 import logging
-from uuid import UUID
 from aio_pika.message import AbstractIncomingMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 

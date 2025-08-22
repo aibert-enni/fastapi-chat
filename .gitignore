@@ -6,3 +6,5 @@ certs
 __pycache__
 .idea
 uploads
+
+.pytest_cache
