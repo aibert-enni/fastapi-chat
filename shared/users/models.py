@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.core.models import BaseUUID
-
-if TYPE_CHECKING:
-    from shared.auth.models import EmailVerification
-    from shared.chat.models import Chat, ChatUser, Message
-    from shared.media.models import Image
 
 
 class User(BaseUUID):
@@ -51,3 +46,8 @@ class User(BaseUUID):
         return (
             f"User(id={self.id!r}, name={self.username!r}, fullname={self.fullname!r})"
         )
+
+
+from shared.auth.models import EmailVerification  # noqa: E402
+from shared.chat.models import Chat, ChatUser, Message  # noqa: E402
+from shared.media.models import Image  # noqa: E402

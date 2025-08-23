@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from shared.database import engine
+from shared.error.exception_handlers import setup_custom_exception_handlers
 from shared.rabbit.rabbit_consumer import rabbit_consumer
 from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.redis import redis_chat_subscribe, redis_push_notifications_subscribe
@@ -48,5 +49,7 @@ async def lifestyle(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifestyle)
+
+setup_custom_exception_handlers(app)
 
 app.include_router(router)

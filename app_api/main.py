@@ -10,6 +10,7 @@ from app_api.media.router import router as media_router
 from app_api.push_notification.router import router as push_router
 from app_api.users.router import router as users_router
 from shared.database import engine
+from shared.error.exception_handlers import setup_custom_exception_handlers
 from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.settings import log_settings, settings
 
@@ -25,6 +26,9 @@ async def lifestyle(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifestyle, root_path="/api")
+
+
+setup_custom_exception_handlers(app)
 
 
 @app.middleware("http")
