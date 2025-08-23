@@ -46,6 +46,11 @@ Perfect as a learning project or a starting point for more complex applications.
 - [Nginx](https://nginx.org/) - for reverse proxy
 ---
 
+## API Preview
+<img width="960" height="479" alt="auth" src="https://github.com/user-attachments/assets/63e755bf-172a-4180-bfa0-0b66f4b77cff" />
+<img width="960" height="483" alt="chat" src="https://github.com/user-attachments/assets/3dc414b8-8f41-448a-a242-5aa7d26eff2c" />
+---
+
 ## Installation
 
 ```bash
