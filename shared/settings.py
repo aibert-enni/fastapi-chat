@@ -1,9 +1,8 @@
-import json
 import logging
 from pathlib import Path
+
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -36,6 +35,10 @@ class JwtSettings(BaseModel):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 1
 
 
+class EmailSettings(BaseModel):
+    EXPIRE_MINUTES: int = 60
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
@@ -45,6 +48,7 @@ class Settings(BaseSettings):
     rmq: RMQSettings
     redis: RedisSettings
     jwt: JwtSettings = JwtSettings()
+    email: EmailSettings = EmailSettings()
     media: MediaSettings = MediaSettings()
 
 

@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Response, status
 
-from shared.auth.dependencies import get_current_superuser
 from shared.database import SessionDep
 from shared.users.schemas import SuperUserCreateS, SuperUserS, SuperUserUpdateS
 from shared.users.services import UserService
-
 
 router = APIRouter(prefix="/users", tags=["admin users"])
 

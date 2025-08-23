@@ -1,14 +1,13 @@
 from fastapi import HTTPException
 
 from shared.error.custom_exceptions import (
-    CredentialError,
     AuthorizationError,
+    CredentialError,
     DatabaseError,
-    NotFoundError,
     IntegrityError,
+    NotFoundError,
     ValidationError,
 )
-
 
 BUSINESS_EXCEPTIONS = (
     HTTPException,

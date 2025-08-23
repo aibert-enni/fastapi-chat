@@ -1,11 +1,12 @@
 import json
+
 from fastapi.testclient import TestClient
 from websockets import ClientConnection
 
 
 async def register_user(client: TestClient, username: str, password: str) -> dict:
     resp = await client.post(
-        "/auth/register",
+        "/api/auth/register",
         json={"username": username, "fullname": "Test User", "password": password},
     )
 
@@ -15,7 +16,7 @@ async def register_user(client: TestClient, username: str, password: str) -> dic
 
 
 async def delete_user(admin_client: TestClient, id: str):
-    resp = await admin_client.delete(f"/admin/users/{id}")
+    resp = await admin_client.delete(f"/api/admin/users/{id}")
 
     assert resp.status_code == 204
 

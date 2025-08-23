@@ -8,8 +8,6 @@ COPY shared/ ./shared
 
 COPY requirements.txt .
 
-COPY .env .
-
 COPY certs/ ./certs
 
 RUN pip install -r requirements.txt

@@ -1,19 +1,20 @@
+from typing import Union
 from uuid import UUID
-from sqlalchemy import and_, func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError as SQLIntegrityError
 
-from shared.users.models import User
+from sqlalchemy import and_, func, select
+from sqlalchemy.exc import IntegrityError as SQLIntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from shared.chat.models import Chat, ChatType, ChatUser, Message
 from shared.chat.schemas import ChatCreateS, ChatUserS, MessageInfoS
 from shared.error.custom_exceptions import (
     IntegrityError,
     NotFoundError,
 )
+from shared.users.models import User
 
 
 class ChatService:
-
     @staticmethod
     async def create_chat(
         session: AsyncSession, chat: ChatCreateS, type: ChatType
@@ -25,7 +26,9 @@ class ChatService:
         return db_chat
 
     @staticmethod
-    async def get_private_chat(session: AsyncSession, user_one: User, user_two: User):
+    async def get_private_chat(
+        session: AsyncSession, user_one: User, user_two: User
+    ) -> Union[Chat, None]:
         subq = (
             select(ChatUser.chat_id)
             .group_by(ChatUser.chat_id)
@@ -41,8 +44,6 @@ class ChatService:
         )
         result = await session.execute(query)
         chat = result.scalars().first()
-        if chat is None:
-            raise NotFoundError
         return chat
 
     @classmethod
@@ -117,7 +118,7 @@ class ChatService:
         try:
             await session.commit()
             await session.refresh(db_message)
-        except SQLIntegrityError as e:
+        except SQLIntegrityError:
             raise IntegrityError(message="Invalid chat_id or user_id")
         return db_message
 

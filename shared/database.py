@@ -1,14 +1,14 @@
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.exc import (
-    SQLAlchemyError,
     IntegrityError as SQLIntegiryError,
     NoResultFound,
+    SQLAlchemyError,
 )
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from shared.error.constants import BUSINESS_EXCEPTIONS, DATABASE_EXCEPTIONS
 from shared.error.custom_exceptions import (
@@ -34,10 +34,10 @@ async def get_db_session():
     try:
         yield db
         await db.commit()
-    except BUSINESS_EXCEPTIONS as e:
+    except BUSINESS_EXCEPTIONS:
         await db.rollback()
         raise
-    except DATABASE_EXCEPTIONS as e:
+    except DATABASE_EXCEPTIONS:
         await db.rollback()
         raise
     except SQLIntegiryError as e:

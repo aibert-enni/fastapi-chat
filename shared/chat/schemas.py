@@ -1,7 +1,8 @@
 import datetime
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, Field
+
+from pydantic import BaseModel, ConfigDict
 
 from shared.chat.models import ChatType
 from shared.users.schemas import UserS

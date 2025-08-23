@@ -1,14 +1,18 @@
+from __future__ import annotations
+
+import uuid
 from datetime import datetime, timezone
 from enum import Enum
-from sqlalchemy.dialects.postgresql import ENUM as PGEnum
-from typing import Optional
-import uuid
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import UUID, DateTime, UniqueConstraint
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import UUID, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.dialects.postgresql import ENUM as PGEnum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.core.models import BaseUUID
+
+if TYPE_CHECKING:
+    from shared.users.models import User
 
 
 class ChatType(Enum):
@@ -37,21 +41,21 @@ class Chat(BaseUUID):
         nullable=False,
     )
 
-    users: Mapped[list["ChatUser"]] = relationship(
+    users: Mapped[list[ChatUser]] = relationship(
         "ChatUser",
         back_populates="chat",
         cascade="all, delete-orphan",
         overlaps="chat_participations",
     )
 
-    user_participants: Mapped[list["User"]] = relationship(
+    user_participants: Mapped[list[User]] = relationship(
         "User",
         secondary="chat_users",
         back_populates="chat_participations",
         overlaps="chats,users",
     )
 
-    messages: Mapped[list["Message"]] = relationship(
+    messages: Mapped[list[Message]] = relationship(
         "Message",
         back_populates="chat",
     )
@@ -80,8 +84,8 @@ class Message(BaseUUID):
         nullable=False,
     )
 
-    chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
-    user: Mapped["User"] = relationship("User", back_populates="messages")
+    chat: Mapped[Chat] = relationship("Chat", back_populates="messages")
+    user: Mapped[User] = relationship("User", back_populates="messages")
 
     def __repr__(self):
         return f"<Message id={self.id} chat_id={self.chat_id} user_id={self.user_id} content={self.content}>"
@@ -103,10 +107,10 @@ class ChatUser(BaseUUID):
         nullable=False,
     )
 
-    chat: Mapped["Chat"] = relationship(
+    chat: Mapped[Chat] = relationship(
         "Chat", back_populates="users", overlaps="chat_participations,user_participants"
     )
-    user: Mapped["User"] = relationship(
+    user: Mapped[User] = relationship(
         "User", back_populates="chats", overlaps="chat_participations,user_participants"
     )
 

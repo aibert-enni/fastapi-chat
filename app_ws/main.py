@@ -1,12 +1,14 @@
 import asyncio
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from shared.settings import settings, log_settings
 from shared.database import engine
-from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.rabbit.rabbit_consumer import rabbit_consumer
+from shared.rabbit.rabbit_manager import rabbit_manager
 from shared.redis import redis_chat_subscribe, redis_push_notifications_subscribe
+from shared.settings import log_settings, settings
+
 from .router import router
 
 

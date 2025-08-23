@@ -1,17 +1,17 @@
 import logging
 from uuid import UUID
+
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException,
-    status,
 )
 
+from shared.auth.dependencies import GetCurrentUserDep, get_current_user
 from shared.chat.models import ChatType
 from shared.chat.schemas import ChatCreateS, ChatS
 from shared.chat.services import ChatService
 from shared.database import SessionDep
-from shared.auth.dependencies import GetCurrentUserDep, get_current_user
+from shared.error.custom_exceptions import NotFoundError
 from shared.users.models import User
 from shared.users.services import UserService
 
@@ -57,9 +57,7 @@ async def add_user_to_chat(
 ):
     chat = await ChatService.get_chat(session, chat_id)
     if chat.type == ChatType.PRIVATE:
-        raise HTTPException(
-            detail={"error": "Chat isn't exist"}, status_code=status.HTTP_404_NOT_FOUND
-        )
+        raise NotFoundError(message="Chat not found")
     await ChatService.add_user_to_chat(session, chat_id, user)
     return {"message": "User joined to chat successfully."}
 

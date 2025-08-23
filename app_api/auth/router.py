@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Response
 
+from shared.auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
+from shared.auth.schemas import TokenS, UserAuthenticateS, UserChangePasswordS
 from shared.auth.services import AuthService
 from shared.auth.utils import (
     create_access_token,
     create_refresh_token,
 )
-from shared.auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
 from shared.database import SessionDep
-from shared.auth.schemas import TokenS, UserAuthenticateS, UserChangePasswordS
 from shared.users.schemas import UserCreateS, UserS
 from shared.users.services import UserService
 
@@ -18,6 +18,13 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def register(session: SessionDep, user: UserCreateS) -> UserS:
     db_user = await UserService.create_user(session, user)
     return db_user
+
+
+@router.post("/send_verification")
+async def send_verification_email(
+    session: SessionDep,
+):
+    pass
 
 
 @router.post("/login")
@@ -52,7 +59,6 @@ def read_users_me(current_user: GetCurrentUserDep) -> UserS:
 async def refresh_token(
     current_user: GetCurrentUserByRefreshDep,
 ) -> TokenS:
-
     access_token = create_access_token({"sub": current_user.username})
 
     return TokenS(access_token=access_token, token_type="bearer")

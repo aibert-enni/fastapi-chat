@@ -1,14 +1,14 @@
 import json
 import logging
+
 from aio_pika.message import AbstractIncomingMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.redis import redis_publish
-from shared.websocket.schemas import WSPushNotificationS
-
 from shared.database import session_context
 from shared.rabbit.rabbit_manager import RabbitManager, rabbit_manager
+from shared.redis import redis_publish
 from shared.users.services import UserService
+from shared.websocket.schemas import WSPushNotificationS
 
 logger = logging.getLogger(__name__)
 

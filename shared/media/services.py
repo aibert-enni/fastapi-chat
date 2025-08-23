@@ -1,11 +1,12 @@
 import logging
+import shutil
 from pathlib import Path
 from typing import Optional, Tuple, Union
 from uuid import UUID
+
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-import shutil
 
 from shared.media.models import Image
 from shared.settings import settings
@@ -98,7 +99,7 @@ class MediaService:
             logger.info(f"Saving file to {file_path}")
             if not file:
                 raise RuntimeError(f"Failed to save file: {file.filename}")
-        except:
+        except Exception:
             await session.rollback()
             raise HTTPException(
                 detail={"error": "Image isn't uploaded"},
@@ -135,7 +136,6 @@ class MediaService:
             )
 
         try:
-            old_path = db_file.file_path
             db_file.file_path = str(new_file_path)
 
             if alt_text:
@@ -146,13 +146,13 @@ class MediaService:
 
             return db_file
 
-        except Exception as e:
+        except Exception:
             try:
                 new_file_path.unlink()
                 logger.info(
                     f"Cleaned up new file due to database error: {new_file_path}"
                 )
-            except:
+            except Exception:
                 pass
 
             await session.rollback()
@@ -169,7 +169,6 @@ class MediaService:
         file: UploadFile,
         alt_text: Optional[str] = None,
     ) -> Optional[Image]:
-
         # Убираем дублирование проверки
         if not cls.check_if_image(file):
             raise HTTPException(

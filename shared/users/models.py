@@ -1,11 +1,16 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.core.models import BaseUUID
-from shared.media.models import Image
+
+if TYPE_CHECKING:
+    from shared.auth.models import EmailVerification
+    from shared.chat.models import Chat, ChatUser, Message
+    from shared.media.models import Image
 
 
 class User(BaseUUID):
@@ -15,6 +20,8 @@ class User(BaseUUID):
     fullname: Mapped[Optional[str]]
 
     password: Mapped[str] = mapped_column(String(128))
+
+    is_active: Mapped[bool] = mapped_column(default=False, server_default="false")
 
     is_superuser: Mapped[bool] = mapped_column(default=False, server_default="false")
 
@@ -35,6 +42,10 @@ class User(BaseUUID):
     messages: Mapped[list["Message"]] = relationship("Message", back_populates="user")
 
     images: Mapped[list["Image"]] = relationship("Image", back_populates="owner")
+
+    email_verifications: Mapped[list["EmailVerification"]] = relationship(
+        "EmailVerification", back_populates="user"
+    )
 
     def __repr__(self) -> str:
         return (

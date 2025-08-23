@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from fastapi import APIRouter
 
 from shared.database import SessionDep

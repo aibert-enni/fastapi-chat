@@ -1,7 +1,11 @@
+import hashlib
+import secrets
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from fastapi import HTTPException, status
+from typing import Tuple
+
 import jwt
+
 from shared.settings import settings
 
 TOKEN_TYPE_FIELD = "type"
@@ -68,3 +72,9 @@ def create_refresh_token(payload: dict) -> str:
         payload=payload,
         expires_delta=timedelta(days=settings.jwt.REFRESH_TOKEN_EXPIRE_DAYS),
     )
+
+
+def generate_verification_token() -> Tuple[str, str]:
+    raw = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw.encode()).hexdigest()
+    return raw, token_hash

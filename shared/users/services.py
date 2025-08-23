@@ -1,14 +1,14 @@
 from typing import Union
 from uuid import UUID
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError as SQLIntegrityError
-from fastapi import HTTPException, status
 
-from shared.users.schemas import SuperUserCreateS, SuperUserUpdateS, UserCreateS
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError as SQLIntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from shared.core.utils import hash_password
-from shared.users.models import User
 from shared.error.custom_exceptions import IntegrityError, NotFoundError
+from shared.users.models import User
+from shared.users.schemas import SuperUserCreateS, SuperUserUpdateS, UserCreateS
 
 
 class UserService:
@@ -33,16 +33,12 @@ class UserService:
         return db_user
 
     @staticmethod
-    async def get_user_by_username(
-        session: AsyncSession, username: str
-    ) -> Union[User, None]:
+    async def get_user_by_username(session: AsyncSession, username: str) -> User:
         stmt = select(User).where(User.username == username)
         result = await session.execute(stmt)
         db_user = result.scalar_one_or_none()
-        if not db_user:
-            raise NotFoundError(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
+        if db_user is None:
+            raise NotFoundError(message="User not found")
         return db_user
 
     @classmethod
@@ -55,10 +51,8 @@ class UserService:
         stmt = select(User).where(User.id == user_id)
         result = await session.execute(stmt)
         db_user = result.scalar_one_or_none()
-
-        if not db_user:
-            raise NotFoundError("User not found")
-
+        if db_user is None:
+            raise NotFoundError(message="User not found")
         return db_user
 
     @staticmethod

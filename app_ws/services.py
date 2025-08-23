@@ -1,18 +1,17 @@
 import json
 import logging
-from typing import Union
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.websocket.schemas import WSMessage, WSPushNotificationS, WSSubscribe
 from app_ws.utils import parse_ws_message
 from shared.chat.services import ChatService
 from shared.database import session_context
+from shared.users.models import User
 from shared.users.services import UserService
+from shared.websocket.schemas import WSMessage, WSPushNotificationS, WSSubscribe
 
 from .ws_manager import ConnectionManager, manager
-from shared.users.models import User
 
 logger = logging.getLogger(__name__)
 

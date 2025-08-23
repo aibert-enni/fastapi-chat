@@ -1,18 +1,18 @@
 import logging
 
 from fastapi import Request, status
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
+from app_api.main import app
 from shared.error.custom_exceptions import (
+    AuthorizationError,
+    CredentialError,
     DatabaseError,
     IntegrityError,
     NotFoundError,
-    CredentialError,
-    AuthorizationError,
     ValidationError,
 )
-from app_api.main import app
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +72,6 @@ async def pydantic_validation_exception_handler(
 
 @app.exception_handler(CredentialError)
 async def credential_exception_handler(request: Request, exc: CredentialError):
-
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={
@@ -96,7 +95,7 @@ async def authorization_exception_handler(request: Request, exc: AuthorizationEr
 
 
 @app.exception_handler(ValidationError)
-async def authorization_exception_handler(request: Request, exc: ValidationError):
+async def validation_exception_handler(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={

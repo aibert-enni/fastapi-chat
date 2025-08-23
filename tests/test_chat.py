@@ -1,16 +1,16 @@
 import json
-import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
-import websockets
 
-from auth.utils import create_access_token
-from chat.services import ChatService
+import pytest
+import websockets
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from shared.auth.utils import create_access_token
+from shared.chat.services import ChatService
+from shared.users.schemas import UserCreateS
+from shared.users.services import UserService
 from tests.utils import subscribe_websockets_to_chat
 
-from .fixtures import test_engine, test_session, client
 from .settings import host, port
-from users.services import UserService
-from users.schemas import UserCreateS
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -31,7 +31,8 @@ async def test_ws(test_session: AsyncSession):
 
     chat_id = str(chat.id)
 
-    ws_url = lambda token: f"ws://{host}:{port}/chats/ws?token={token}"
+    def ws_url(token) -> str:
+        return f"ws://{host}:{port}/chats/ws?token={token}"
 
     async with (
         websockets.connect(ws_url(token1)) as ws1,

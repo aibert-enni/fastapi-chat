@@ -12,8 +12,6 @@ COPY alembic.ini .
 
 COPY alembic/ ./alembic
 
-COPY .env .
-
 COPY certs/ ./certs
 
 RUN pip install -r requirements.txt

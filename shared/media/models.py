@@ -1,11 +1,16 @@
-from datetime import datetime, timezone
-from typing import Optional
+from __future__ import annotations
+
 import uuid
-from sqlalchemy import UUID, DateTime
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Optional
+
+from sqlalchemy import UUID, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.core.models import BaseUUID
+
+if TYPE_CHECKING:
+    from shared.users.models import User
 
 
 class Image(BaseUUID):
@@ -25,4 +30,4 @@ class Image(BaseUUID):
     )
     alt_text: Mapped[Optional[str]] = mapped_column(nullable=True)
 
-    owner: Mapped["User"] = relationship("User", back_populates="images")
+    owner: Mapped[User] = relationship("User", back_populates="images")

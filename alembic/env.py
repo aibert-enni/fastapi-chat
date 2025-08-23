@@ -1,25 +1,20 @@
 import asyncio
 import os
 import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "api"))
-
-from dotenv import load_dotenv
-from sqlalchemy.ext.asyncio import async_engine_from_config
-import alembic_postgresql_enum
-
-from shared.core.models import Base
-from shared.users.models import User
-from shared.chat.models import Chat, Message, ChatUser
-from shared.media.models import Image
-
-load_dotenv(dotenv_path=".env")
-
 from logging.config import fileConfig
 
 from sqlalchemy import pool
 
 from alembic import context
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "api"))
+
+from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import async_engine_from_config
+
+from shared.core.models import Base
+
+load_dotenv(dotenv_path=".env")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

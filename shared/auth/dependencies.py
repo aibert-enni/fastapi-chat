@@ -2,11 +2,12 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from shared.users.models import User
+
 from shared.auth.services import AuthService
 from shared.auth.utils import TokenType, decode_jwt
 from shared.database import SessionDep
 from shared.error.custom_exceptions import AuthorizationError, CredentialError
+from shared.users.models import User
 
 http_bearer = HTTPBearer(auto_error=False)
 

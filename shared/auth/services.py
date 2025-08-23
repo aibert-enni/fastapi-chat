@@ -1,28 +1,29 @@
-from typing import Union
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import status
+from typing import Tuple, Union
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from shared.auth.models import EmailVerification
+from shared.auth.schemas import UserAuthenticateS
+from shared.auth.utils import (
+    TOKEN_TYPE_FIELD,
+    TokenType,
+    generate_verification_token,
+)
+from shared.core.utils import hash_password, verify_password
 from shared.error.custom_exceptions import (
     CredentialError,
     ValidationError,
 )
 from shared.users.models import User
-from shared.auth.schemas import UserAuthenticateS
 from shared.users.schemas import UserBaseS
-from shared.auth.utils import (
-    TOKEN_TYPE_FIELD,
-    TokenType,
-)
-from shared.core.utils import hash_password, verify_password
 from shared.users.services import UserService
 
 
 class AuthService:
-
     @staticmethod
     async def authenticate_user(session: AsyncSession, user: UserAuthenticateS) -> User:
         db_user = await UserService.get_user_by_username(session, user.username)
-        if db_user == None or not verify_password(user.password, db_user.password):
+        if not verify_password(user.password, db_user.password):
             raise CredentialError(message="Username or Password incorrect")
         return user
 
@@ -64,3 +65,14 @@ class AuthService:
         await session.refresh(user)
 
         return User
+
+    @staticmethod
+    async def create_email_verification(
+        session: AsyncSession, user: User
+    ) -> Tuple[EmailVerification, str]:
+        raw_token, hash_token = generate_verification_token()
+        email = EmailVerification(user_id=user.id, token_hash=hash_token)
+        session.add(email)
+        await session.commit()
+        await session.refresh(email)
+        return email, raw_token

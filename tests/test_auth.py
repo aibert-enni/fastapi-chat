@@ -1,19 +1,20 @@
-from httpx import AsyncClient
 import pytest
+from httpx import AsyncClient
+
+from .settings import test_password, test_username
 from .utils import delete_user, register_user
-
-from .settings import test_username, test_password
-
-from .fixtures import client, admin_token, admin_client
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_login(client: AsyncClient, admin_client: AsyncClient):
-    url = "/auth/login"
+    url = "/api/auth/login"
 
     resp = await client.post(url, json={"username": "dasdda", "password": "3123213"})
 
-    assert resp.status_code == 404
+    print("Status:", resp.status_code)
+    print("Text:", resp.text)
+
+    assert resp.status_code == 401
 
     data = await register_user(client, test_username, test_password)
 
@@ -29,7 +30,7 @@ async def test_login(client: AsyncClient, admin_client: AsyncClient):
 
     client.headers = {"Authorization": f"Bearer {token}"}
 
-    resp = await client.get("/auth/me")
+    resp = await client.get("/api/auth/me")
 
     assert resp.status_code == 200
 
@@ -38,7 +39,7 @@ async def test_login(client: AsyncClient, admin_client: AsyncClient):
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_register(client: AsyncClient, admin_client: AsyncClient):
-    url = "/auth/register"
+    url = "/api/auth/register"
 
     resp = await client.post(
         url,

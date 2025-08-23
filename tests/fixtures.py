@@ -1,10 +1,12 @@
 from typing import AsyncGenerator
-from httpx import ASGITransport, AsyncClient
-import pytest_asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from core.models import Base
-from src.main import app
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
+from app_api.main import app
+from shared.core.models import Base
+
 from .settings import host, port, test_db_url
 
 
@@ -20,8 +22,6 @@ async def test_engine():
 
     yield engine
 
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
 
 
@@ -42,7 +42,6 @@ async def test_session(test_engine):
 
 @pytest_asyncio.fixture(scope="session")
 async def client() -> AsyncGenerator[AsyncClient, None]:
-
     async with AsyncClient(
         transport=ASGITransport(app=app, client=(host, port)), base_url="http://test"
     ) as client:
@@ -60,7 +59,6 @@ async def admin_token(client: AsyncClient) -> str:
 
 @pytest_asyncio.fixture(scope="session")
 async def admin_client(admin_token: str) -> AsyncGenerator[AsyncClient, None]:
-
     async with AsyncClient(
         transport=ASGITransport(app=app, client=(host, port)),
         base_url="http://test",

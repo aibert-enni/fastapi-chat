@@ -1,9 +1,10 @@
 import asyncio
-import json
 import logging
+
 import aioredis
 
 from app_ws.services import chat_ws_service
+
 from .settings import settings
 
 logger = logging.getLogger(__name__)

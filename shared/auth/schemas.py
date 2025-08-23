@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from shared.auth.validators import Password
 from shared.users.schemas import UserUsernameS
 

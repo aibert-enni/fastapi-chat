@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict
 
 from shared.auth.validators import Password
@@ -17,7 +18,6 @@ class UserCreateS(UserBaseS):
 
 
 class UserReadS(UserBaseS):
-
     model_config = ConfigDict(from_attributes=True)
 
 

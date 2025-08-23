@@ -1,19 +1,18 @@
 import json
 import logging
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from fastapi import Query
+
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 from fastapi.websockets import WebSocketState
 from pydantic import ValidationError
 
-from shared.redis import redis_publish
 from shared.auth.services import AuthService
+from shared.auth.utils import decode_jwt
+from shared.database import SessionDep
+from shared.error.custom_exceptions import CredentialError
+from shared.redis import redis_publish
 
 from .utils import parse_ws_message
 from .ws_manager import manager
-from shared.auth.utils import decode_jwt
-from shared.error.custom_exceptions import CredentialError
-from shared.database import SessionDep
-
 
 router = APIRouter(tags=["ws"])
 
