@@ -36,7 +36,10 @@ class JwtSettings(BaseModel):
 
 
 class EmailSettings(BaseModel):
+    GMAIL_USER: str
+    GMAIL_APP_PASSWORD: str
     EXPIRE_MINUTES: int = 60
+    SEND_LIMIT_MINUTES: int = 5
 
 
 class Settings(BaseSettings):
@@ -47,8 +50,8 @@ class Settings(BaseSettings):
     db: DBSettings
     rmq: RMQSettings
     redis: RedisSettings
+    email: EmailSettings
     jwt: JwtSettings = JwtSettings()
-    email: EmailSettings = EmailSettings()
     media: MediaSettings = MediaSettings()
 
 

@@ -1,13 +1,21 @@
-from fastapi import APIRouter, Response
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Response, status
 
 from shared.auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
-from shared.auth.schemas import TokenS, UserAuthenticateS, UserChangePasswordS
+from shared.auth.schemas import (
+    EmailSendS,
+    TokenS,
+    UserAuthenticateS,
+    UserChangePasswordS,
+)
 from shared.auth.services import AuthService
 from shared.auth.utils import (
     create_access_token,
     create_refresh_token,
 )
 from shared.database import SessionDep
+from shared.error.custom_exceptions import APIError
 from shared.users.schemas import UserCreateS, UserS
 from shared.users.services import UserService
 
@@ -17,14 +25,40 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register", status_code=201)
 async def register(session: SessionDep, user: UserCreateS) -> UserS:
     db_user = await UserService.create_user(session, user)
+    await AuthService.send_email_verification(session, db_user)
     return db_user
 
 
-@router.post("/send_verification")
-async def send_verification_email(
-    session: SessionDep,
-):
-    pass
+@router.post("/verification/send")
+async def send_verification_email(session: SessionDep, email: EmailSendS):
+    db_user = await UserService.get_user_by_email(session, email.email)
+    if db_user.is_active:
+        return {"status": "Success", "message": "Account already verified"}
+
+    await AuthService.send_email_verification(session, db_user)
+    return {"status": "Success"}
+
+
+@router.post("/verification/{token}")
+async def token_verification(token: str, session: SessionDep):
+    email_verification = await AuthService.get_email_verification_by_token(
+        session, token
+    )
+    if email_verification.is_used:
+        raise APIError(
+            message="This verification link has already been used",
+            status_code=status.HTTP_409_CONFLICT,
+            error="Conflict Error",
+        )
+    if email_verification.expires_at < datetime.now(timezone.utc):
+        raise APIError(
+            message="This verification link is expired",
+            status_code=status.HTTP_410_GONE,
+            error="Gone Error",
+        )
+    await AuthService.activate_email_verification(session, email_verification)
+    await UserService.activate_user(session, email_verification.user)
+    return {"status": "Success"}
 
 
 @router.post("/login")

@@ -2,7 +2,7 @@
 
 ## Connection
 
-**Endpoint:** `ws://localhost/ws/?token=...`
+**Endpoint:** `ws://localhost/ws?token=...`
 
 **Authentication:** JWT token via query parameter
 

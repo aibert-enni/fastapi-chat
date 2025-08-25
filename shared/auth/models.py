@@ -20,6 +20,7 @@ class EmailVerification(BaseUUID):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
         nullable=False,
     )
     token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -27,6 +28,12 @@ class EmailVerification(BaseUUID):
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc)
         + timedelta(minutes=settings.email.EXPIRE_MINUTES),
+        nullable=False,
+    )
+    sent_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
     is_used: Mapped[bool] = mapped_column(default=False, nullable=False)

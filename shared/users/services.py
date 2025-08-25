@@ -24,10 +24,18 @@ class UserService:
 
         try:
             await session.commit()
-        except SQLIntegrityError:
-            raise IntegrityError(
-                "User with this username already exist",
-            )
+        except SQLIntegrityError as e:
+            detail = str(e.orig)
+            if "username" in detail:
+                raise IntegrityError(
+                    "User with this username already exist",
+                )
+            elif "email" in detail:
+                raise IntegrityError(
+                    "User with this email already exist",
+                )
+            else:
+                raise IntegrityError("Unique constraint violation")
         await session.refresh(db_user)
 
         return db_user
@@ -41,11 +49,6 @@ class UserService:
             raise NotFoundError(message="User not found")
         return db_user
 
-    @classmethod
-    async def delete_user(cls, session: AsyncSession, user: User) -> None:
-        await session.delete(user)
-        await session.commit()
-
     @staticmethod
     async def get_user_by_id(session: AsyncSession, user_id: UUID) -> User:
         stmt = select(User).where(User.id == user_id)
@@ -54,6 +57,20 @@ class UserService:
         if db_user is None:
             raise NotFoundError(message="User not found")
         return db_user
+
+    @staticmethod
+    async def get_user_by_email(session: AsyncSession, email: str) -> User:
+        stmt = select(User).where(User.email == email)
+        result = await session.execute(stmt)
+        db_user = result.scalar_one_or_none()
+        if db_user is None:
+            raise NotFoundError(message="User not found")
+        return db_user
+
+    @classmethod
+    async def delete_user(cls, session: AsyncSession, user: User) -> None:
+        await session.delete(user)
+        await session.commit()
 
     @staticmethod
     async def update_user(
@@ -65,3 +82,12 @@ class UserService:
         await session.commit()
         await session.refresh(db_user)
         return db_user
+
+    @staticmethod
+    async def activate_user(session: AsyncSession, user: User) -> User:
+        if user.is_active:
+            return User
+        user.is_active = True
+        await session.commit()
+        await session.refresh(user)
+        return user

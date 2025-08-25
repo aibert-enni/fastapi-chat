@@ -12,7 +12,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "api"))
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from shared.auth.models import EmailVerification  # noqa: F401
+from shared.chat.models import Chat, ChatUser, Message  # noqa: F401
 from shared.core.models import Base
+from shared.users.models import User  # noqa: F401
 
 load_dotenv(dotenv_path=".env")
 

@@ -13,6 +13,7 @@ class User(BaseUUID):
 
     username: Mapped[str] = mapped_column(String(30), unique=True, index=True)
     fullname: Mapped[Optional[str]]
+    email: Mapped[str] = mapped_column(String(), unique=True, index=True)
 
     password: Mapped[str] = mapped_column(String(128))
 

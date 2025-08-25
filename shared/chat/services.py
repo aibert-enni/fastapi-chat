@@ -36,13 +36,13 @@ class ChatService:
             .having(func.bool_and(ChatUser.user_id.in_([user_one.id, user_two.id])))
             .subquery()
         )
-        query = select(Chat).where(
+        stmt = select(Chat).where(
             and_(
                 Chat.id.in_(select(subq.c.chat_id)),
                 Chat.type == ChatType.PRIVATE,
             )
         )
-        result = await session.execute(query)
+        result = await session.execute(stmt)
         chat = result.scalars().first()
         return chat
 

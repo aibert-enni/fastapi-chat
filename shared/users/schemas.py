@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 from shared.auth.validators import Password
 
@@ -14,6 +14,7 @@ class UserBaseS(UserUsernameS):
 
 
 class UserCreateS(UserBaseS):
+    email: EmailStr
     password: Password
 
 
