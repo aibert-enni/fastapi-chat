@@ -14,6 +14,8 @@ Perfect as a learning project or a starting point for more complex applications.
   - Sign up / Sign in endpoints
   - Secure password hashing
   - Token validation middleware
+- **Email verification**
+  - User email verification
 - **Real-time chat**
   - WebSocket-based communication
   - Private chat rooms by `chat_id`
@@ -43,6 +45,7 @@ Perfect as a learning project or a starting point for more complex applications.
 - [Pytest](https://docs.pytest.org/en/stable/) - testing tool
 - [RabbitMQ](https://www.rabbitmq.com/) - for message queue
 - [Redis](https://redis.io/) - for synchronize websockets of multiple server instanses 
+- [Celery](https://docs.celeryq.dev/en/stable/) - for background tasks
 - [Nginx](https://nginx.org/) - for reverse proxy
 ---
 
