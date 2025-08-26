@@ -6,6 +6,8 @@ COPY app_api/ ./app_api
 
 COPY shared/ ./shared
 
+COPY ddd_shared/ ./ddd_shared
+
 COPY requirements.txt .
 
 COPY alembic.ini .

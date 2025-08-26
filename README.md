@@ -26,11 +26,11 @@ Perfect as a learning project or a starting point for more complex applications.
   - Admin endpoints
 - **Image**
   - User can upload avatar
-- **Clean project structure**
-  - Separation of routes, services, and schemas
-  - Separation of api and websocket server
-  - Custom and flexible exception handling
-  - Easy to extend
+- **DDD-aligned project structure**
+  - Clear separation of domains, use cases, and repositories
+  - SSeparation of application layer (services, use cases) and infrastructure (API, WebSocket)
+  - Custom and flexible domain & application exception handling
+  - Easy to extend with new aggregates or bounded contexts
 
 ---
 
