@@ -1,16 +1,25 @@
+from dishka import FromDishka
+from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Response, status
 
+from ddd_shared.application.usecases.user.get import (
+    GetUserByIdCommand,
+    GetUserByIdUseCase,
+)
 from shared.database import SessionDep
 from shared.users.schemas import SuperUserCreateS, SuperUserS, SuperUserUpdateS
 from shared.users.services import UserService
 
-router = APIRouter(prefix="/users", tags=["admin users"])
+router = APIRouter(prefix="/users", tags=["admin users"], route_class=DishkaRoute)
 
 
 @router.get("/{user_id}")
-async def get_user_by_id(user_id: str, session: SessionDep) -> SuperUserS:
-    db_user = await UserService.get_user_by_id(session, user_id)
-    return db_user
+async def get_user_by_id(
+    user_id: str, usecase: FromDishka[GetUserByIdUseCase]
+) -> SuperUserS:
+    command = GetUserByIdCommand(user_id)
+    result = await usecase.act(command)
+    return result
 
 
 @router.post("/")

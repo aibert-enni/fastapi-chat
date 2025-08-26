@@ -1,13 +1,19 @@
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter
 
-from shared.database import SessionDep
+from ddd_shared.application.usecases.user.get import (
+    GetUserByIdCommand,
+    GetUserByIdUseCase,
+)
 from shared.users.schemas import UserS
-from shared.users.services import UserService
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["users"], route_class=DishkaRoute)
 
 
 @router.get("/{user_id}")
-async def get_user_by_id(user_id: str, session: SessionDep) -> UserS:
-    db_user = await UserService.get_user_by_id(session, user_id)
-    return db_user
+async def get_user_by_id(
+    user_id: str, usecase: FromDishka[GetUserByIdUseCase]
+) -> UserS:
+    command = GetUserByIdCommand(user_id)
+    result = await usecase.act(command)
+    return result

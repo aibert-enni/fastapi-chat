@@ -42,7 +42,7 @@ class EmailSettings(BaseModel):
     SEND_LIMIT_MINUTES: int = 5
 
 
-class Settings(BaseSettings):
+class CommonSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
         env_nested_delimiter="__",
@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     media: MediaSettings = MediaSettings()
 
 
-settings = Settings()
+settings = CommonSettings()
 
 
 def log_settings():

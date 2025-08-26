@@ -1,7 +1,14 @@
 from datetime import datetime, timezone
 
+from dishka import FromDishka
+from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Response, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from ddd_shared.application.usecases.user.register import (
+    UserRegisterCommand,
+    UserRegisterUseCase,
+)
 from shared.auth.dependencies import GetCurrentUserByRefreshDep, GetCurrentUserDep
 from shared.auth.schemas import (
     EmailSendS,
@@ -19,14 +26,18 @@ from shared.error.custom_exceptions import APIError
 from shared.users.schemas import UserCreateS, UserS
 from shared.users.services import UserService
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"], route_class=DishkaRoute)
 
 
 @router.post("/register", status_code=201)
-async def register(session: SessionDep, user: UserCreateS) -> UserS:
-    db_user = await UserService.create_user(session, user)
-    await AuthService.send_email_verification(session, db_user)
-    return db_user
+async def register(
+    user: UserCreateS, usecase: FromDishka[UserRegisterUseCase]
+) -> UserS:
+    command = UserRegisterCommand(
+        user.username, user.fullname, user.email, user.password
+    )
+    user = await usecase.act(command)
+    return user
 
 
 @router.post("/verification/send")
@@ -63,7 +74,7 @@ async def token_verification(token: str, session: SessionDep):
 
 @router.post("/login")
 async def login(
-    session: SessionDep, response: Response, user: UserAuthenticateS
+    session: FromDishka[AsyncSession], response: Response, user: UserAuthenticateS
 ) -> TokenS:
     user = await AuthService.authenticate_user(session, user)
     access_token = create_access_token({"sub": user.username})

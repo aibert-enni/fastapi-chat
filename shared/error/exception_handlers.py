@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from ddd_shared.infra.domain.exceptions import DomainError
 from shared.error.custom_exceptions import (
     APIError,
     DatabaseError,
@@ -15,6 +16,17 @@ logger = logging.getLogger(__name__)
 def setup_custom_exception_handlers(app: FastAPI):
     @app.exception_handler(DatabaseError)
     async def database_exception_handler(request: Request, exc: DatabaseError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": exc.error,
+                "message": exc.message,
+                "request_id": getattr(request.state, "request_id", None),
+            },
+        )
+
+    @app.exception_handler(DomainError)
+    async def domain_exception_handler(request: Request, exc: DomainError):
         return JSONResponse(
             status_code=exc.status_code,
             content={

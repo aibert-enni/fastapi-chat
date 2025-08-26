@@ -1,6 +1,8 @@
 import uuid
 from contextlib import asynccontextmanager
 
+from dishka import AsyncContainer
+from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI, Request
 
 from app_api.admin.router import router as admin_router
@@ -9,6 +11,7 @@ from app_api.chat.router import router as chat_router
 from app_api.media.router import router as media_router
 from app_api.push_notification.router import router as push_router
 from app_api.users.router import router as users_router
+from ddd_shared.bootstrap.ioc.container import get_container
 from shared.database import engine
 from shared.error.exception_handlers import setup_custom_exception_handlers
 from shared.rabbit.rabbit_manager import rabbit_manager
@@ -50,3 +53,8 @@ app.include_router(push_router)
 @app.get("/")
 def read_root():
     return "Hello"
+
+
+container: AsyncContainer = get_container()
+
+setup_dishka(container, app)

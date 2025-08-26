@@ -12,10 +12,10 @@ from shared.error.custom_exceptions import (
 )
 from shared.settings import settings
 
-logger = logging.getLogger("uvicorn")
+logger = logging.getLogger(__name__)
 
 
-@celery.task
+@celery.task(autoretry_for=(smtplib.SMTPException,), retry_backoff=True, max_retries=5)
 def send_email(sender: str, to: str, subject: str, body: str):
     message = EmailMessage()
     message["From"] = sender
@@ -33,11 +33,11 @@ def send_email(sender: str, to: str, subject: str, body: str):
             message="Email service unavailable, please try again later"
         )
     except smtplib.SMTPRecipientsRefused as e:
-        code, message = list(e.recipients.values())[0]  # first failed reason
+        code, message = list(e.recipients.values())[0]
         logger.error(f"Error with email recipient: {message}")
         if 500 <= code < 600:
             raise ValidationError(message=f"Invalid recipient: {message.decode()}")
-        elif 400 <= code < 500:  # temporary failure
+        elif 400 <= code < 500:
             raise ServiceUnavailableError(
                 message=f"Mail server temporarily refused recipient: {message.decode()}"
             )
