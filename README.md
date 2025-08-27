@@ -37,6 +37,7 @@ Perfect as a learning project or a starting point for more complex applications.
 ## Tech Stack
 
 - [FastAPI](https://fastapi.tiangolo.com/) — web framework
+- [Dishka](https://github.com/reagento/dishka) — dependency injection framework
 - [PyJWT](https://pyjwt.readthedocs.io/) — JWT implementation
 - [SQLAlchemy](https://www.sqlalchemy.org/) — ORM
 - [PostgreSQL](https://www.postgresql.org/) — database (can be replaced)
